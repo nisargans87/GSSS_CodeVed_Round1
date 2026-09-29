@@ -112,8 +112,9 @@ The following are possible future improvements and are not currently implemented
 
 ## Screenshots / Demo
 
-Screenshots can be added to this section to demonstrate the game interface, MCQ popup, scoring system, and timer.
+Screenshots this section to demonstrate the game interface, MCQ popup, scoring system, and timer.
 
+![alt text](<Screenshot (443).png>)
 ## Project Highlights
 
 **Gaming + Technical Knowledge + Time-Based Challenge**
@@ -134,9 +135,6 @@ The project pairs familiar Snake gameplay with technical questions triggered by 
 ## Author / Developer
 
 **Developed by**
-
-`Your Name`
-
-- GitHub: [Profile link]
-- LinkedIn: [Profile link]
-- Email: [Email address]
+- Nisarga NS
+- GSSS SSFGC, 2nd Year, BCA, 4th Semester.
+- Email: nisargans011@gmail.com
