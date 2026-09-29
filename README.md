@@ -2,6 +2,13 @@
 
 > An interactive Snake Game combining technical MCQ challenges with time-based gameplay.
 
+<p align="center">
+	<img src="https://img.shields.io/badge/HTML5-Page%20Structure-E34F26?logo=html5&logoColor=white" alt="HTML5: page structure">
+	<img src="https://img.shields.io/badge/CSS3-Interface-1572B6?logo=css3&logoColor=white" alt="CSS3: interface styling">
+	<img src="https://img.shields.io/badge/JavaScript-Game%20Logic-F7DF1E?logo=javascript&logoColor=black" alt="JavaScript: game logic">
+	<img src="https://img.shields.io/badge/HTML5%20Canvas-Rendering-334155" alt="HTML5 Canvas: rendering">
+</p>
+
 ## Project Overview
 
 Technical Snake Game is a browser-based game built for **Round 1** of **CodeVed**, a technical event conducted during **Gita Samhita – 2025** at **GSSS SSFGC, Mysuru**. It combines traditional Snake gameplay with technical multiple-choice questions: collecting an apple brings up a question, and a correct answer earns a point and grows the snake.
@@ -112,9 +119,12 @@ The following are possible future improvements and are not currently implemented
 
 ## Screenshots / Demo
 
-Screenshots this section to demonstrate the game interface, MCQ popup, scoring system, and timer.
+<p align="center">
+	<img src="./Screenshot%20%28443%29.png" alt="Technical Snake Game showing the canvas, score, countdown timer, and an active technical MCQ" width="820">
+</p>
 
-![alt text](<Screenshot (443).png>)
+<p align="center"><em>Game interface with a technical question displayed during play.</em></p>
+
 ## Project Highlights
 
 **Gaming + Technical Knowledge + Time-Based Challenge**
