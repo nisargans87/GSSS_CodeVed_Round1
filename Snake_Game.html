@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Technical Snake Game</title>
+    <style>
+        body {
+            background: lightslategray;
+            text-align: center;
+            font-family: Arial, sans-serif;
+            margin:0;
+        }
+        canvas {
+            background: black;
+            margin-top: 20px;
+            box-shadow: 9px 9px 9px 9px yellow;
+            border: 10px solid yellow;
+        }
+        h1 {
+            color: yellow;
+            font-family: "Lucida Console", monospace;
+            margin: 0;
+            font-size: 70px;
+            text-shadow: 4px 4px 5px blue;
+        }
+        p {
+            color: burlywood;
+            font-size: 40px;
+            margin: 0;
+            font-family: "Lucida Console", monospace;
+        }
+        /* Top Bar Styling */
+        #topBar {
+            position: relative;
+            width: 900px;
+            margin: 20px auto 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #222;
+            padding: 15px 20px;
+            border-radius: 10px;
+            box-shadow: 5px 5px 15px black;
+            color: white;
+        }
+        #scoreContainer h2, #timerContainer h3 {
+            margin: 0;
+            font-family: "Lucida Console", monospace;
+            text-shadow: 2px 2px 5px blue;
+        }
+        #timeContainer {
+            width: 250px;
+            height: 20px;
+            background: gray;
+            border-radius: 10px;
+            margin-top: 5px;
+            overflow: hidden;
+        }
+        #timeBar {
+            height: 100%;
+            width: 100%;
+            background: limegreen;
+            border-radius: 10px;
+        }
+        /* MCQ Popup */
+        #questionBox {
+            display: none;
+            position: absolute;
+            top: 200px;
+            left: 30%;
+            background: white;
+            padding: 20px;
+            border: 3px solid black;
+            width: 400px;
+            z-index: 10;
+        }
+        #questionBox p {
+            font-size: 18px;
+            margin-bottom: 15px;
+        }
+        #questionBox label {
+            display: block;
+            margin: 5px 0;
+        }
+        #questionBox button {
+            margin-top: 10px;
+            padding: 8px 15px;
+            background: blue;
+            color: red;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Technical Snake Game</h1>
+<p>Use Arrow keys</p>
+
+<!-- Top Bar -->
+<div id="topBar">
+    <div id="scoreContainer">
+        <h2 id="score">Score: 0</h2>
+    </div>
+    <div id="timerContainer">
+        <h3 id="timerText">15:00</h3>
+        <div id="timeContainer">
+            <div id="timeBar"></div>
+        </div>
+    </div>
+</div>
+
+<canvas id="game" width="900" height="700"></canvas>
+
+<!-- MCQ Popup -->
+<div id="questionBox">
+    <p id="questionText"></p>
+    <form id="questionForm">
+        <label><input type="radio" name="answer" value="A"> <span id="optionA"></span></label>
+        <label><input type="radio" name="answer" value="B"> <span id="optionB"></span></label>
+        <label><input type="radio" name="answer" value="C"> <span id="optionC"></span></label>
+        <label><input type="radio" name="answer" value="D"> <span id="optionD"></span></label>
+        <button type="button" id="submitAnswer">Submit</button>
+    </form>
+</div>
+
+<script>
+/*if(!localStorage.getItem("gameStartTime")){
+    localStorage.setItem("gameStartTime", Date.now());
+}
+if(localStorage.getItem("gameFinished") === "true"){
+    document.body.innerHTML = "<h1 style='color:red;text-align:center;margin-top:200px;'>Game Already Completed.No more Chance!!.</h1>";
+    throw new Error("Game blocked");
+	}*/
+// Canvas setup
+const canvas = document.getElementById("game");
+const ctx = canvas.getContext("2d");
+const box = 20;
+let score = 0;
+let snake = [{x: 12*box, y: 15*box}];
+let direction = "RIGHT";
+let food = {x: Math.floor(Math.random()*19)*box, y: Math.floor(Math.random()*19)*box};
+let paused = false;
+
+// Questions array
+const questions = [
+    {q:"Which topology uses a central device to connect all nodes?", options:{A:"Bus", B:"Star", C:"Ring", D:"Mesh"}, correct:"B"},
+    {q:"Which OOP concept allows same function name with different parameters?", options:{A:"Encapsulation", B:"Inheritance", C:"Polymorphism", D:"Abstraction"}, correct:"C"},
+    {q:"Which attribute is used to provide an alternative text for an image?", options:{A:"title", B:"alt", C:"src", D:"href"}, correct:"B"},
+    {q:"Which HTML element does NOT require a closing tag?", options:{A:"div", B:"p", C:"img", D:"span"}, correct:"C"},
+    {q:"Which SQL command is used to retrieve data from a table?", options:{A:"SELECT", B:"UPDATE", C:"DELETE", D:"INSERT"}, correct:"A"},
+    {q:"Which key is used to start the slide show from the beginning in PowerPoint?", options:{A:"F1", B:"F3", C:"F5", D:"F7"}, correct:"C"},
+	{q:"Which state represents a process waiting for CPU?", options:{A:"Ready", B:"Waiting", C:"Running", D:"Terminated"}, correct:"A"},
+    {q:"Which type of memory retains data even after power is turned off?", options:{A:"RAM", B:"Cache", C:"ROM", D:"Register"}, correct:"C"},
+	{q:"Which data structure is used in recursive function calls?", options:{A:"Queue", B:"Stack", C:"Heap", D:"Linked List"}, correct:"B"},
+	{q:"Which type of polymorphism occurs at compile time?", options:{A:"Runtime polymorphism", B:"Dynamic polymorphism", C:"Method Overloading", D:"Method Overriding"}, correct:"C"},
+	{q:"Which software development model follows a sequential design process?", options:{A:"Agile Model", B:"Spiral Model", C:"Waterfall Model", D:"Prototype Model"}, correct:"C"},
+	{q:"What is a digital wallet in E-Commerce?", options:{A:"A hardware device to store money", B:"A software application used for online payments", C:"A physical wallet used for cards", D:"A banking server"}, correct:"B"},
+    {q:"Which AI application converts speech to text?", options:{A:"Computer Vision", B:"Natural Language Processing", C:"Speech Recognition", D:"Robotics"}, correct:"C"},	
+	{q:"Which keyword is used to prevent inheritance of a class in java", options:{A:"final", B:"static", C:"abstract", D:"private"}, correct:"A"},
+	{q:"What does 'GPU' stand for?", options:{A:"Graphical Processing Unit", B:"General Purpose Unit", C:"Graphics Processing Unit", D:"General Processing Unit"}, correct:"C"},
+	{q:"Which data structure uses LIFO principle?", options:{A:"Queue", B:"Stack", C:"Linked List", D:"Array"}, correct:"B"},
+	{q:"Which scheduling algorithm may cause starvation?", options:{A:"FCFS", B:"SJF", C:"Round Robin", D:"FIFO"}, correct:"B"},
+	{q:"Which of the following is not a C++ feature?", options:{A:"Object-Oriented", B:"Platform Independent", C:"Pointer Arithmetic", D:"Operator Overloading"}, correct:"B"},
+	{q:"Which memory management scheme divides memory into fixed-size blocks?", options:{A:"Segmentation", B:"Paging", C:"Contiguous allocation", D:"Dynamic allocation"}, correct:"B"},
+	{q:"Which loop executes at least once even if condition is false?", options:{A:"for", B:"while", C:"do-while", D:"foreach"}, correct:"C"},
+	{q:"Which directory structure allows fast access to files?", options:{A:"Single-level", B:"Two-level", C:"Tree-structured", D:"Graph-structured"}, correct:"C"},
+	{q:"Which collection is ordered and allows duplicates?", options:{A:"Set", B:"List", C:"Map", D:"Queue"}, correct:"B"},
+	{q:"What is the time complexity of accessing an element in an array by index?", options:{A:"O(n)", B:"O(log n)", C:"O(1)", D:"O(n^2)"}, correct:"C"},
+	{q:"Which protocol is used to transfer files over the internet?", options:{A:"SMTP", B:"FTP", C:"HTTP", D:"DNS"}, correct:"B"}
+	];
+
+
+// Copy questions to availableQuestions for unique selection
+let availableQuestions = [...questions];
+
+// MCQ popup elements
+const questionBox = document.getElementById("questionBox");
+const questionText = document.getElementById("questionText");
+const optionA = document.getElementById("optionA");
+const optionB = document.getElementById("optionB");
+const optionC = document.getElementById("optionC");
+const optionD = document.getElementById("optionD");
+const submitAnswer = document.getElementById("submitAnswer");
+let currentQuestion = null;
+
+// Show MCQ
+function showQuestion(q){
+    paused = true;
+    currentQuestion = q;
+    questionText.textContent = q.q;
+    optionA.textContent = q.options.A;
+    optionB.textContent = q.options.B;
+    optionC.textContent = q.options.C;
+    optionD.textContent = q.options.D;
+    document.querySelectorAll('input[name="answer"]').forEach(r => r.checked = false);
+    questionBox.style.display = 'block';
+}
+
+// Submit answer
+submitAnswer.addEventListener('click', ()=>{
+    const selected = document.querySelector('input[name="answer"]:checked');
+    if(!selected){ alert("Select an answer!"); return; }
+
+    if(selected.value === currentQuestion.correct){
+        score++;
+        document.getElementById("score").innerText = "Score: " + score;
+        alert("Correct!");
+		let lastSegment = snake[snake.length-1];
+		snake.push({x:lastSegment.x,y:lastSegment.y});
+    } else {
+        alert("Wrong Answer! Keep going.");
+    }
+
+    // Remove used question
+    availableQuestions = availableQuestions.filter(q => q !== currentQuestion);
+
+    questionBox.style.display = 'none';
+    paused = false;
+
+    // Move food to new random position
+    food = {x: Math.floor(Math.random()*19)*box, y: Math.floor(Math.random()*19)*box};
+
+    // Reset availableQuestions if all used
+    if(availableQuestions.length === 0){
+        availableQuestions = [...questions];
+    }
+});
+
+// Key controls
+document.addEventListener("keydown", e=>{
+    if(e.key==="ArrowLeft" && direction!=="RIGHT") direction="LEFT";
+    if(e.key==="ArrowUp" && direction!=="DOWN") direction="UP";
+    if(e.key==="ArrowRight" && direction!=="LEFT") direction="RIGHT";
+    if(e.key==="ArrowDown" && direction!=="UP") direction="DOWN";
+});
+
+// Collision
+function collision(head, array){ 
+    return array.some(segment=>segment.x===head.x && segment.y===head.y); 
+}
+
+// Draw loop
+function draw(){
+    if(paused) return; // pause snake while answering
+    ctx.fillStyle="#0f172a";
+    ctx.fillRect(0,0,canvas.width,canvas.height);
+
+    // Draw snake
+    snake.forEach((segment,i)=>{
+        ctx.shadowBlur = i===0?15:0;
+        ctx.shadowColor = "lime";
+        ctx.fillStyle = i===0 ? "#22c55e" : "#4ade80";
+        ctx.fillRect(segment.x, segment.y, box, box);
+        if(i===0){
+            ctx.shadowBlur=0;
+            ctx.fillStyle="white";
+            ctx.beginPath();
+            ctx.arc(segment.x+5, segment.y+5, 2,0, Math.PI*2);
+            ctx.arc(segment.x+15, segment.y+5, 2,0, Math.PI*2);
+            ctx.fill();
+        }
+    });
+
+    // Draw apple
+    ctx.fillStyle="red";
+    ctx.beginPath();
+    ctx.arc(food.x+box/2, food.y+box/2, box/2, 0, Math.PI*2);
+	ctx.fill();
+	ctx.fillStyle="brown"; ctx.fillRect(food.x+box/2-2, food.y-3, 2,5);
+    ctx.fillStyle="green"; ctx.beginPath(); ctx.arc(food.x+box/2+8, food.y, 5,0,Math.PI*2); ctx.fill();
+
+
+    // Move snake
+    let headX = snake[0].x;
+    let headY = snake[0].y;
+    if(direction==="LEFT") headX -= box;
+    if(direction==="UP") headY -= box;
+    if(direction==="RIGHT") headX += box;
+    if(direction==="DOWN") headY += box;
+
+    // Game over
+    if(headX<0 || headY<0 || headX>=canvas.width || headY>=canvas.height || collision({x:headX,y:headY},snake)){
+        clearInterval(game); clearInterval(countdown);
+        alert("Game Over! Score: "+score);
+        return;
+    }
+
+    // Eating food
+    if(headX===food.x && headY===food.y){
+        if(availableQuestions.length > 0){
+            let randomIndex = Math.floor(Math.random()*availableQuestions.length);
+            showQuestion(availableQuestions[randomIndex]);
+        }
+    } else {
+        snake.pop();
+    }
+
+    snake.unshift({x:headX,y:headY});
+}
+
+let game = setInterval(draw,300);
+
+// Timer
+let totalTime = 15*60, timeLeft=totalTime;
+let bar = document.getElementById("timeBar"), text=document.getElementById("timerText");
+let countdown = setInterval(()=>{
+    let minutes=Math.floor(timeLeft/60);
+    let seconds=timeLeft%60;
+    if(seconds<10) seconds="0"+seconds;
+    text.innerText=minutes+":"+seconds;
+    bar.style.width = (timeLeft/totalTime)*100+"%";
+    timeLeft--;
+    if(timeLeft<0){
+        clearInterval(countdown);
+        clearInterval(game);
+        alert("Time's up! Score: "+score);
+    }
+},1000);
+</script>
+
+</body>
+</html>
