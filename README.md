@@ -119,9 +119,7 @@ The following are possible future improvements and are not currently implemented
 
 ## Screenshots / Demo
 
-<p align="center">
-	<img src="./Screenshot%20%28443%29.png" alt="Technical Snake Game showing the canvas, score, countdown timer, and an active technical MCQ" width="820">
-</p>
+![Technical Snake Game showing the canvas, score, countdown timer, and an active technical MCQ](Screenshot%20%28443%29.png)
 
 <p align="center"><em>Game interface with a technical question displayed during play.</em></p>
 
