@@ -17,6 +17,9 @@ Technical Snake Game is a browser-based game built for **Round 1** of **CodeVed*
 
 **Gita Samhita – 2025** is the annual college festival at **GSSS SSFGC, Mysuru**. **CodeVed** was conducted as a technical event as part of the festival. This Technical Snake Game was developed for Round 1 of the event.
 
+<img width="1024" height="1536" alt="WhatsApp Image 2026-09-30 at 4 44 59 PM" src="https://github.com/user-attachments/assets/ba87f93d-4891-42ad-bafc-ae1f7fa22925" />
+
+
 ## Key Features
 
 - Classic Snake gameplay rendered on an HTML5 canvas
